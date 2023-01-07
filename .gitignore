@@ -1,0 +1,5 @@
+birthday_list.json
+message_gen.json
+!/examples/*
+
+.env

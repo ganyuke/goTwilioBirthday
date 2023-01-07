@@ -1,0 +1,20 @@
+{
+    "salutations": [
+        "Happy birthday {name}!\n"
+    ],
+    "body": [
+        "\nAnother year survived! The President thank you for your continued contribution to the military-industrial complex!\n\nKeep doing what you do best!\n\n",
+        "\nHope your special day is going swell! Today, America recognizes your stalwart commitment the beacon of freedom in a bleak world!\n\nThank you for your service and enjoy your birthday!\n\n",
+        "\nAlways wishing the best for you! Because what's best for you is best for us, too!\n\nWe thank you for your continued support! Have a great birthday!\n\n"
+    ],
+    "valedictions": [
+        "Sincerly,\n",
+        "Best regards,\n",
+        "Kind regards,\n",
+        "Best wishes,\n"
+    ],
+    "sender_name": [
+        "EthicWinds, Uninc."
+    ]
+}
+    
