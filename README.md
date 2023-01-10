@@ -11,6 +11,9 @@ Automatically text your friends when it's their birthday using Twilio. Supports 
 * SENDER_NUMBER - the number of your Twilio account
 * BIRTHDAY_LIST_PATH - the path to `birthday_list.json`
 * MESSAGE_TEMPLATE_PATH - the path to `message_gen.json`
-* APP_ENV - If set to "production", stops check for .env file.
+**Flags**
+* env - If set to "dev", uses .env file in project root.
+* text - If set to false, prints messages to logs instead of sending.
+* time - Time in UTC for when the program will check and send messages for birthdays each day.
 
-Copy `message_gen.json` and `birthday_list.json` to your desired location and edit them to your liking. Afterward, run the program. Every day at 10:30 UTC, the program will check the birthday list to see if there are any birthdays today.
+Copy `message_gen.json` and `birthday_list.json` to your desired location and edit them to your liking. Note that all enviroment variables listed above are required to function. Afterward, run the program. By default, the program checks for birthdays and sends messages at 00:00 UTC.

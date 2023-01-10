@@ -25,6 +25,24 @@ func envLoad() {
 	if err != nil {
 		log.Fatal("Error loading .env file")
 	}
+	fmt.Println(".env file loaded.")
+}
+
+func sanityCheck() {
+	requiredVaribles := []string{
+		"TWILIO_ACCOUNT_SID",
+		"TWILIO_AUTH_TOKEN",
+		"SENDER_NUMBER",
+		"BIRTHDAY_LIST_PATH",
+		"MESSAGE_TEMPLATE_PATH",
+	}
+
+	for _, variable := range requiredVaribles {
+		if os.Getenv(variable) == "" {
+			log.Fatal(variable + " is not specified!")
+		}
+	}
+
 }
 
 func birthdayLoad() []Birthday {
@@ -61,16 +79,16 @@ func checkDate(birthdayList []Birthday) []Birthday {
 }
 
 func alertBirthday(activeBirthdays []Birthday) {
+	fmt.Printf("\nToday is %s. There is currently %d birthday(s).\n", time.Now().Local().Format(time.RFC1123), len(activeBirthdays))
 	for _, birthday := range activeBirthdays {
 		randomMessage := messageGenerator.GenerateMessage(birthday.Name)
-		println(randomMessage)
-		// sendMessage.Birthday(birthday.Phone, randomMessage)
+		sendMessage.Birthday(birthday.Phone, randomMessage)
 	}
 }
 
-func scheduler() {
+func scheduler(crontime string) {
 	s := gocron.NewScheduler(time.UTC)
-	s.Every(1).Day().At("10:30").Do(func() {
+	s.Every(1).Day().At(crontime).Do(func() {
 		alertBirthday(checkDate(birthdayLoad()))
 	})
 	s.StartBlocking()
@@ -78,21 +96,35 @@ func scheduler() {
 
 func main() {
 	var enviroment string
-	flag.StringVar(&enviroment, "enviroment", "production", "Whether in proudction or development. Default: production")
+	var twilio bool
+	var crontime string
+
+	flag.StringVar(&enviroment, "env", "prod", "If set to \"dev\", uses .env file in project root.")
+	flag.BoolVar(&twilio, "text", true, "Controls whether texts will be sent or merely logged.")
+	flag.StringVar(&crontime, "time", "00:00", "Time in UTC to check birthdays and send texts.")
 
 	flag.Parse()
 
 	switch enviroment {
-	case "development":
+	case "dev":
 		envLoad()
-	case "production":
-
+	case "prod":
 	default:
-		log.Fatal("Unknown enviroment!")
+		log.Panic("Unknown enviroment!")
 	}
 
-	sendMessage.CreateClient()
+	sanityCheck()
 
-	scheduler()
+	if !twilio {
+		fmt.Println("Message sending disabled.")
+	}
+
+	if crontime != "00:00" {
+		fmt.Println("Cronjob adjusted to run at " + crontime + " UTC.")
+	}
+
+	sendMessage.CreateClient(twilio)
+
+	scheduler(crontime)
 
 }

@@ -10,11 +10,16 @@ import (
 )
 
 var (
-	twlioClient *twilio.RestClient
+	messageService *Service
 )
 
-func CreateClient() {
-	twlioClient = twilio.NewRestClient()
+type Service struct {
+	twlioClient *twilio.RestClient
+	enabled     bool
+}
+
+func CreateClient(enabled bool) {
+	messageService = &Service{twlioClient: twilio.NewRestClient(), enabled: enabled}
 }
 
 func Birthday(recieverNumber string, message string) {
@@ -26,9 +31,13 @@ func Birthday(recieverNumber string, message string) {
 	params.SetFrom(senderNumber)
 	params.SetBody(message)
 
+	if !messageService.enabled {
+		fmt.Println("Message content to " + recieverNumber + " was:\n" + message)
+	}
+
 	fmt.Println("Sending message for: " + recieverNumber)
 
-	resp, err := twlioClient.Api.CreateMessage(params)
+	resp, err := messageService.twlioClient.Api.CreateMessage(params)
 	if err != nil {
 		fmt.Println(err)
 	} else {
